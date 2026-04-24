@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>SRC Pageant 2025 - Verify Your Vote</title>
+    <script src="./css/style.css"></script>
+    <style>
+        /* Custom Animations */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        
+        /* Wave Shape */
+        .wave-shape {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+        
+        @media (max-width: 640px) {
+            .wave-shape svg {
+                height: 60px;
+            }
+        }
+        
+        .wave-shape svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 100px;
+        }
+        
+        .wave-shape .shape-fill {
+            fill: #FFFFFF;
+        }
+        :root {
+            --dwu-green: #006837;
+            --dwu-gold: #FFD700;
+            --dwu-light-gold: #FFF9C4;
+            --dwu-dark-green: #004d26;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--dwu-gold), #FFC107);
+            color: var(--dwu-dark-green);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        /* Message Animation */
+        @media (max-width: 767px) {
+            .message {
+                margin: 0.75rem 0;
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .input-field {
+                padding-left: 3rem !important;
+            }
+            
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+                
+            }
+            
+            .input-field {
+                font-size: 0.9375rem;
+                padding: 0.625rem 1rem 0.625rem 2.5rem;
+                min-height: 2.75rem;
+            }
+            
+            .btn-primary {
+                padding: 0.625rem 1rem;
+                font-size: 0.9375rem;
+            }
+            
+            /* Adjust card padding on mobile */
+            .verification-card {
+                padding: 1.25rem !important;
+            }
+            
+            /* Improve spacing for mobile */
+            .space-y-6 > * + * {
+                margin-top: 1rem;
+            }
+        }
+        
+        .message {
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            font-size: 1rem;
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Enhanced Message Styling */
+        .success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-left: 4px solid #22c55e;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #22c55e, #16a34a);
+        }
+        .error, .info {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-left: 4px solid #16a34a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .error::before, .info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #16a34a, #15803d);
+        }
+        .verification-container {
+            max-width: 500px;
+            margin: 2rem auto 5rem;
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--dwu-gold);
+        }
+
+        @media (max-width: 640px) {
+            .verification-container {
+                margin: 1rem auto 3rem;
+                padding: 1.25rem;
+                border-radius: 0.75rem;
+            }
+        }
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 3rem;
+            background-color: white !important;
+        }
+        
+        /* Remove autofill yellow background */
+        .input-field:-webkit-autofill,
+        .input-field:-webkit-autofill:hover, 
+        .input-field:-webkit-autofill:focus, 
+        .input-field:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px white inset !important;
+            box-shadow: 0 0 0 30px white inset !important;
+            -webkit-text-fill-color: #1f2937 !important;
+        }
+
+        @media (max-width: 640px) {
+            .input-field {
+                font-size: 1rem;
+                padding: 0.875rem 1rem;
+                margin: 0.5rem 0 1.25rem;
+            }
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--dwu-gold);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="text-white p-4 fixed w-full z-20 top-0 shadow-lg border-b-2 border-[#FFD700]" style="background: linear-gradient(135deg, #006837 0%, #004d26 100%);">
+        <div class="absolute inset-0 opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg%20width=%2260%22%20height=%2260%22%20viewBox=%220%200%2060%2060%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill=%22%23ffffff%22%20fill-opacity=%220.2%22%20fill-rule=%22evenodd%22%3E%3Cpath%20d=%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="container mx-auto flex justify-between items-center relative">
+            <div class="flex items-center">
+                <img src="media/src-logo.jpg" alt="SRC Logo" class="h-10 w-10 rounded-full border-2 border-yellow-400 mr-2">
+                <h1 class="text-xl md:text-2xl font-bold">DWU SRC Pageant 2025</h1>
+            </div>
+            <div class="flex items-center">
+                <ul class="hidden md:flex space-x-6 text-white">
+                    <li><a href="index.html" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                        <span class="hidden sm:inline">Back to Home</span>
+                    </a></li>
+                    <li><a href="verification.html" class="flex items-center text-yellow-300 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="hidden sm:inline">Verify Vote</span>
+                    </a></li>
+                    <li><a href="dashboard.html" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                        </svg>
+                        <span class="hidden sm:inline">Live Dashboard</span>
+                    </a></li>
+                </ul>
+                <button class="md:hidden text-2xl z-30" id="mobile-menu-button" aria-label="Toggle menu">☰</button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden fixed top-16 left-0 right-0 bg-green-800 py-4 px-6 shadow-lg z-50 mt-2">
+                <ul class="space-y-4 text-white">
+                    <li><a href="index.html" class="flex items-center hover:text-yellow-300 transition duration-300 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
+                        </svg>
+                        Back to Home
+                    </a></li>
+                    <li><a href="verification.html" class="flex items-center text-yellow-300 font-medium py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 relative top-0.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Verify Vote
+                    </a></li>
+                    <li><a href="dashboard.html" class="flex items-center hover:text-yellow-300 transition duration-300 py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                        </svg>
+                        Live Dashboard
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 md:pt-24 px-2 sm:px-4 bg-gradient-to-b from-green-50 to-white min-h-screen">
+        <div class="container mx-auto">
+            <!-- Background Elements -->
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-20"></div>
+                <div class="absolute -bottom-20 right-0 w-64 h-64 bg-green-100 rounded-full mix-blend-multiply filter blur-xl opacity-20"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-50 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+            </div>
+
+        <div class="max-w-4xl mx-auto relative z-10 px-2 sm:px-4">
+            <!-- Decorative Header with Animation -->
+            <div class="text-center mb-6 md:mb-10 transform transition-all duration-500 md:hover:scale-[1.01] px-1">
+                <div class="inline-flex items-center justify-center w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br from-yellow-200 to-yellow-400 rounded-full shadow-lg mb-6 md:mb-8 relative" style="margin-top: 0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-12 md:w-12 text-green-800 relative top-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-3 md:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-700 to-green-900">
+                    Vote Verification
+                </h1>
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
+                    Confirm that your vote for <span class="font-semibold text-green-700">People's Choice</span> was successfully recorded in our system.
+                </p>
+            </div>
+            
+            <!-- Verification Card with Enhanced Styling -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform transition-all duration-300 hover:shadow-2xl">
+                
+                <!-- Verification Card with Enhanced Styling -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transform transition-all duration-300 hover:shadow-2xl">
+                    <div class="p-1 bg-gradient-to-r from-green-600 to-yellow-500"></div>
+                    
+                    <div class="p-4 sm:p-6 md:p-8 verification-card">
+                        <div class="flex flex-col md:flex-row items-start space-y-6 md:space-y-0 md:space-x-6">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="relative flex items-center w-full text-sm sm:text-base">
+                                    <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Verify Your Vote</h3>
+                                <p class="text-gray-600">Enter the email address you used when casting your vote to check its status. We'll let you know if your vote was successfully recorded.</p>
+                                
+                                <div class="mt-8 space-y-6">
+                                    <div class="space-y-2 w-full">
+                                        <label for="emailInput" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                        <div class="relative mb-4">
+                                            <div class="absolute left-3 top-[55%] -translate-y-1/2 flex items-center pointer-events-none">
+                                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                                </svg>
+                                            </div>
+                                        <div class="relative w-full">
+                                            <input 
+                                                type="email" 
+                                                id="emailInput" 
+                                                placeholder="✉️ Enter your email address" 
+                                                class="pl-12 pr-10 py-2 sm:py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-base sm:text-base input-field" 
+                                                required
+                                            />
+                                            <button 
+                                                type="button" 
+                                                onclick="document.getElementById('emailInput').value = ''; document.getElementById('message').style.display = 'none';" 
+                                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-r-lg focus:outline-none transition-colors duration-200"
+                                                title="Clear email"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        </div>
+                                        <button 
+                                            onclick="verifyVote()" 
+                                            type="button" 
+                                            class="w-full px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-base shadow-md hover:shadow-lg"
+                                        >
+                                            Verify My Vote
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                    </button>
+                </div>
+                
+                <div id="message" class="message mt-6"></div>
+            </div>
+            
+            <!-- Additional Information -->
+            <!-- Info Cards with Animation -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 md:my-10">
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 p-2 bg-green-50 rounded-lg text-green-600">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">About Vote Verification</h3>
+                            <p class="text-gray-600">Verification helps ensure the integrity of the voting process. Your email is only used to verify your vote and will not be shared with any third parties.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 transform hover:-translate-y-1">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 p-2 bg-blue-50 rounded-lg text-blue-600">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Processing Time</h3>
+                            <p class="text-gray-600">Votes are typically processed within a few minutes. If you don't see your vote, please try again later or contact our support team for assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Footer with Wave Decoration -->
+    <div class="relative">
+        <div class="wave-shape">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </div>
+    <footer class="bg-[#004d26] text-white pt-16 pb-8 relative">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">SRC Pageant 2025</h3>
+                    <p class="text-green-200 mt-1">Celebrating Excellence & Leadership</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p>For inquiries, contact: <a href="mailto:230050@student.dwu.ac.pg" class="text-yellow-300 hover:underline">230050@student.dwu.ac.pg</a></p>
+                    <p class="mt-1 text-green-200 text-sm"> 2025 SRC Pageant. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer -->
+<footer class="bg-green-800 text-white py-4">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <p class="text-sm">Developed by Keith Banks Pala</p>
+            <p class="text-xs"> Third Year Information Systems Student | DWU</p>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            
+            if (menu && menuButton) {
+                // Toggle menu on button click
+                menuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isHidden = menu.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        // Open menu
+                        menu.classList.remove('hidden');
+                        menuButton.textContent = '✕'; // Show close icon when menu is open
+                    } else {
+                        // Close menu
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰'; // Show hamburger icon when menu is closed
+                    }
+                });
+                
+                // Close menu when clicking on a link
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰'; // Reset to hamburger icon when closing from link click
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+                
+                // Close on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+            }
+        });
+
+        async function verifyVote() {
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
+
+            if (!email || !email.includes('@')) {
+                showMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+
+
+            showMessage(`
+                <div class="px-2 py-1.5">
+                    <div class="flex items-center">
+                        <div class="relative w-5 h-5 mr-1.5 flex-shrink-0">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-4 h-4 border-2 border-green-200 rounded-full"></div>
+                            </div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-4 h-4 border-t-2 border-green-600 rounded-full animate-spin"></div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-center w-full">
+                                <span class="text-base font-semibold text-gray-800">Verifying</span>
+                            </div>
+                            <div class="flex items-center h-3 mt-0.5">
+                                <div class="dot-animation">
+                                    <span class="dot dot-1"></span>
+                                    <span class="dot dot-2"></span>
+                                    <span class="dot dot-3"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    .dot-animation {
+                        display: flex;
+                        align-items: center;
+                        height: 2px;
+                    }
+                    .dot {
+                        display: inline-block;
+                        width: 4px;
+                        height: 4px;
+                        border-radius: 50%;
+                        background-color: #10B981;
+                        margin: 0 1.5px;
+                        opacity: 0.4;
+                    }
+                    .dot-1 {
+                        animation: dotPulse 1.5s infinite ease-in-out;
+                    }
+                    .dot-2 {
+                        animation: dotPulse 1.5s infinite ease-in-out 0.2s;
+                    }
+                    .dot-3 {
+                        animation: dotPulse 1.5s infinite ease-in-out 0.4s;
+                    }
+                    @keyframes dotPulse {
+                        0%, 100% {
+                            transform: scale(0.8);
+                            opacity: 0.4;
+                            background-color: #10B981;
+                        }
+                        50% {
+                            transform: scale(1.1);
+                            opacity: 1;
+                            background-color: #059669;
+                        }
+                    }
+                </style>
+            `, 'info');
+
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbys19BiV6ZiM7jA_LvE124Ia_5St5u56mVI0t3tkGkI6WtRxfa4b9mGLah-Rma6LVRV/exec?email=' + encodeURIComponent(email);
+
+            try {
+                const response = await fetch(scriptUrl);
+                if (!response.ok) throw new Error('Network response was not OK');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showMessage(
+                        `<div class="flex items-start">
+                            <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <div>
+                                <p class="font-semibold text-green-800">Vote Verified Successfully!</p>
+                                <p class="mt-1 text-green-700">Thank you for voting for <span class="font-semibold">${data.contestant.replace(/\b(Mr\.?|Miss)\s+(?=Mr\.?|Miss\b)/gi, '').replace(/\s+&\s+/, ' & ')}</span> on ${new Date(data.timestamp).toLocaleString()}.</p>
+                            </div>
+                        </div>`,
+                        'success'
+                    );
+                } else {
+                    showMessage(
+                        '<div class="flex items-start">' +
+                        '<svg class="h-6 w-6 text-red-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 20 20" stroke="currentColor">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' +
+                        '</svg>' +
+                        '<div><p class="font-semibold">No Vote Found</p>' +
+                        '<p class="mt-1">We couldn\'t find a vote associated with this email. Please check your email and try again.</p></div></div>',
+                        'error'
+                    );
+                }
+            } catch (err) {
+                showMessage(
+                    '<div class="flex items-start">' +
+                    '<svg class="h-6 w-6 text-red-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 20 20" stroke="currentColor">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' +
+                    '</svg>' +
+                    '<div><p class="font-semibold">Verification Error</p>' +
+                    '<p class="mt-1">We encountered an error while verifying your vote. Please try again later.</p></div></div>',
+                    'error'
+                );
+                console.error('Verification error:', err);
+            }
+        }
+
+        function showMessage(msg, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = msg;
+            messageDiv.className = `message ${type} flex items-start`;
+            messageDiv.style.display = 'flex';
+            
+            // Auto-scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Handle form submission with Enter key
+        const emailInput = document.getElementById('emailInput');
+        emailInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyVote();
+            }
+        });
+
+        // Block keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Block Ctrl+U
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                alert("View Source is disabled.");
+                return false;
+            }
+
+            // Block F12
+            if (e.key === "F12") {
+                e.preventDefault();
+                alert("Developer Tools are disabled.");
+                return false;
+            }
+
+            // Block Ctrl+Shift+I (Inspect)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+                alert("Inspect is disabled.");
+                return false;
+            }
+        });
+
+        // Block right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Right-click is disabled.");
+            return false;
+        });
+    </script>
+</body>
+</html>

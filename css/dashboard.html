@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DWU SRC Pageant 2025 - Live Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --dwu-green: #006837;
+            --dwu-gold: #FFD700;
+            --dwu-light-gold: #FFF9C4;
+            --dwu-dark-green: #004d26;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --card-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .candidate-card {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            background: white;
+        }
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .bar-container {
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 12px;
+            margin-top: 10px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--dwu-gold), #ffc107);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+
+        
+        .card {
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .contestant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin: 0.5rem 0;
+        }
+        
+        @media (max-width: 640px) {
+            .contestant-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+        }
+        .category-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(90deg, #006837, #004d26);
+            margin: 1.5rem 0;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        @media (max-width: 768px) {
+            .contestant-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.75rem;
+                padding: 0.75rem;
+            }
+            .category-title {
+                font-size: 1.1rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .contestant-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+                padding: 0.5rem;
+            }
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            .header p {
+                font-size: 0.9rem;
+            }
+        }
+        .candidate-card:hover .vote-count {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .category-title-enhanced {
+            background: linear-gradient(90deg, #006837, #004d26);
+            color: #FFD700;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+    </style>
+    <style>
+        /* Removed placing badge styles as placing badges are no longer used */
+        .contestant-grid {
+            margin-top: 0.25rem; /* reduce top margin to push cards up */
+        }
+     </style>
+ </head>
+ <body class="font-sans bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
+     <!-- Navigation Bar -->
+     <nav class="text-white p-4 fixed w-full z-20 top-0 shadow-lg border-b-2 border-[#FFD700]" style="background: linear-gradient(135deg, #006837 0%, #004d26 100%);">
+
+        <div class="absolute inset-0 opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="container mx-auto flex justify-between items-center relative">
+            <div class="flex items-center">
+                <img src="../media/src-logo.jpg" alt="SRC Logo" class="h-10 w-10 rounded-full border-2 border-yellow-400 mr-2">
+                <h1 class="text-xl md:text-2xl font-bold">DWU SRC Pageant 2025</h1>
+            </div>
+            <div class="flex items-center">
+                <ul class="hidden md:flex space-x-6 text-white">
+                    <li><a class='flex items-center hover:text-yellow-300 transition duration-300' href='/' onclick="event.preventDefault(); window.location.href = '/';">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                        <span class="hidden sm:inline">Back to Home</span>
+                    </a></li>
+                </ul>
+                <button class="md:hidden text-2xl z-30" id="mobile-menu-button" aria-label="Toggle menu">☰</button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden fixed top-16 left-0 right-0 bg-green-800 p-4 shadow-lg z-40">
+                <a class='flex items-center text-white hover:text-yellow-300 py-2' href='/' onclick="event.preventDefault(); window.location.href = '/';">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pageant Header with Background Image -->
+    <div class="relative bg-cover bg-center text-white pt-24 pb-12 md:pt-32 md:pb-16 lg:pt-40 lg:pb-24 shadow-lg overflow-hidden mt-16" style="background-image: linear-gradient(rgba(0, 80, 40, 0.8), rgba(0, 40, 20, 0.7)), url('media/background.jpg'); background-size: cover; background-position: center center; background-attachment: scroll;">
+        <div class="absolute inset-0 bg-gradient-to-b from-green-900/40 to-green-900/70 z-0"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col items-center">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-2 text-shadow">DWU Pageant 2025</h1>
+                <div class="flex items-center bg-green-900/50 px-6 py-1 rounded-full mb-4 border border-yellow-400/30">
+                    <span class="h-2.5 w-2.5 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                    <p class="text-xl md:text-2xl text-center text-yellow-200 font-medium">Live Leaderboard</p>
+                </div>
+            <div class="bg-green-900/80 backdrop-blur-sm px-6 py-2 rounded-full flex items-center border border-white/20 shadow-md">
+                <span class="text-yellow-300 font-bold mr-2">📊</span>
+                <span class="text-white font-medium" id="totalVotes">Total number of Votes: Loading...</span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <main class="container mx-auto px-2 sm:px-4 pt-12 pb-6 md:pt-16 md:pb-8">
+        <div class="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4">
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm">
+                    <button id="mrTab" class="px-6 py-2 rounded-md font-medium text-sm transition-all duration-200 ease-in-out bg-green-700 text-white">
+                        Mr. People's Choice
+                    </button>
+                    <button id="missTab" class="px-6 py-2 rounded-md font-medium text-sm transition-all duration-200 ease-in-out text-gray-700 hover:bg-gray-100">
+                        Miss People's Choice
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="mrContent" class="tab-content">
+                <div class="bg-green-900/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/10">
+                    <div class="flex flex-col items-center mb-4 sm:mb-6">
+                        <h2 class="text-2xl font-bold text-yellow-400">Mr. People's Choice</h2>
+                        <div class="text-xs sm:text-sm font-medium text-gray-200 bg-white/10 px-3 sm:px-4 py-1 rounded-full mt-1 sm:mt-2">
+                            <span class="text-white">Total: </span><span id="mrTotalVotes" class="font-bold text-yellow-300">0</span> <span class="text-white">votes</span>
+                        </div>
+                    </div>
+                    <div id="mrVotes" class="contestant-grid">
+                        <!-- Cards will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="missContent" class="tab-content hidden">
+                <div class="bg-green-900/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/10">
+                    <div class="flex flex-col items-center mb-4 sm:mb-6">
+                        <h2 class="text-2xl font-bold text-yellow-400">Miss People's Choice</h2>
+                        <div class="text-xs sm:text-sm font-medium text-gray-200 bg-white/10 px-3 sm:px-4 py-1 rounded-full mt-1 sm:mt-2">
+                            <span class="text-white">Total: </span><span id="missTotalVotes" class="font-bold text-yellow-300">0</span> <span class="text-white">votes</span>
+                        </div>
+                    </div>
+                    <div id="missVotes" class="contestant-grid">
+                        <!-- Cards will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="text-center mt-12">
+            <div class="inline-flex items-center bg-white rounded-full px-6 py-2 shadow-md border border-gray-100">
+                <span class="text-gray-500 text-sm">Last updated:</span>
+                <span id="lastUpdated" class="text-gray-800 font-medium ml-2">Loading...</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Image configuration
+        const IMAGE_CONFIG = {
+            baseUrl: 'media/',
+            extensions: ['.jpg', '.jpeg', '.png'],
+            defaultAvatar: 'https://ui-avatars.com/api/?name=NAME&background=006837&color=fff&size=256'
+        };
+        
+        // Format name for display (removes numbers and special characters)
+        function formatDisplayName(name) {
+            if (!name) return '';
+            // Remove file extension if present
+            name = name.replace(/\.[^/.]+$/, '');
+            // Split by common delimiters and capitalize each part
+            return name.split(/[\s_]+/)
+                      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+                      .join(' ');
+        }
+        
+        // Initialize Firebase
+        const firebaseConfig = {
+            databaseURL: "https://dwu-pageant-voting-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.database();
+
+
+        function formatName(name) {
+            return name.replace(/_/g, ".").trim();
+        }
+
+        // Map of contestant IDs to their faculties
+        const facultyMap = {
+            // Mr Contestants
+            'mr1': 'FASS', 'mr2': 'FMHS', 'mr3': 'FMHS', 'mr4': 'FMHS', 'mr5': 'FMHS',
+            'mr6': 'FMHS', 'mr7': 'FMHS', 'mr8': 'FBI', 'mr9': 'FBI', 'mr10': 'FBI',
+            // Add more contestants as needed with their respective faculties
+            
+            // Miss Contestants
+            'miss1': 'FASS', 'miss2': 'FMHS', 'miss3': 'FMHS', 'miss4': 'FMHS', 'miss5': 'FMHS',
+            'miss6': 'FMHS', 'miss7': 'FBI', 'miss8': 'FBI', 'miss9': 'FBI', 'miss10': 'FBI'
+            // Add more contestants as needed with their respective faculties
+        };
+
+        // Faculty color mapping
+        const facultyColors = {
+            'FASS': 'bg-blue-100 text-blue-800',
+            'FMHS': 'bg-green-100 text-green-800',
+            'FBI': 'bg-purple-100 text-purple-800'
+        };
+
+        function generateCards(containerId, dataObj) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = "";
+            const totalVotes = Object.values(dataObj).reduce((a, b) => a + b, 0);
+            const sorted = Object.entries(dataObj).sort((a, b) => b[1] - a[1]);
+            const maxCount = sorted.length > 0 ? sorted[0][1] : 1; // Get the highest vote count
+            
+            // Update total votes display
+            const totalVotesElement = document.getElementById('totalVotes');
+            if (totalVotesElement) {
+                totalVotesElement.textContent = `Total Votes: ${totalVotes.toLocaleString()}`;
+            }
+
+            sorted.forEach(([candidate, count], index) => {
+                const percent = totalVotes ? ((count / totalVotes) * 100).toFixed(1) : 0;
+                // Clean the candidate name and determine category
+                const isMiss = candidate.toLowerCase().includes('miss');
+                const cleanName = candidate.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '');
+                
+                // Create display name with Mr/Miss prefix
+                const displayName = (isMiss ? 'Miss ' : 'Mr ') + formatDisplayName(cleanName);
+                
+                // Create image paths based on category
+                const imgPrefix = isMiss ? 'Miss_' : 'Mr_';
+                const imgPath = `media/${imgPrefix}${cleanName}.jpg`;
+                const imgPathLower = `media/${imgPrefix.toLowerCase()}${cleanName.toLowerCase()}.jpg`;
+                
+                // Log for debugging
+                console.log(`Loading image for ${candidate}:`, imgPath);
+
+                // Check if this contestant is tied for the lead
+                const isTiedForLead = index > 0 && count === sorted[0][1] && count > 0;
+                const isLeading = (index === 0 && count > 0) || isTiedForLead;
+                const card = document.createElement("div");
+                const isTop3 = index < 3 && count > 0;
+                card.className = `group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow transition-all duration-200 h-full flex flex-col relative ${isLeading ? 'ring-2 ring-yellow-400' : 'border border-gray-100'}`;
+                
+                // Frames
+                card.innerHTML = `
+                    <div class="relative flex-1 bg-gradient-to-br from-green-50 to-gray-50 overflow-hidden" style="min-height: 120px;">
+                        <!-- Image container with gradient overlay -->
+                        <div class="relative w-full h-full overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-10"></div>
+                            <img 
+                                src="${imgPath}" 
+                                data-fallback-src="${imgPathLower}"
+                                alt="${displayName}" 
+                                class="w-full h-full object-cover object-center"
+                                style="object-position: center 25%;"
+                                onerror="handleImageError(this, '${candidate}', '${displayName}');"
+                                loading="lazy">
+                        </div>
+                        ${''}
+                        
+                        <!-- Contestant info overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-2 z-20">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="flex items-center">
+                                        <h3 class="text-sm font-bold text-white drop-shadow">${displayName.split(' ')[0]}</h3>
+                                        ${isTop3 ? `
+                                        <span class="ml-1">
+                                            ${index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : ''}
+                                        </span>` : ''}
+                                    </div>
+                                    ${facultyMap[candidate] ? `
+                                        <div class="text-[10px] font-medium mt-0.5 px-1.5 py-0.5 rounded ${facultyColors[facultyMap[candidate]] || 'bg-gray-100 text-gray-800'}">
+                                            ${facultyMap[candidate]}
+                                        </div>
+                                    ` : ''}
+                                        </div>
+                <div class="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center text-xs">
+                    <span class="text-yellow-300 font-extrabold text-2xl vote-count" data-target="${count}">0</span> <span class="text-white font-bold text-lg">votes</span>
+                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="bg-yellow-300 text-yellow-800 font-bold rounded-full w-6 h-6 flex items-center justify-center text-sm">${index + 1}</span>
+                            <span class="text-yellow-600 font-medium">${percent}%</span>
+                        </div>
+                        <div class="mt-1 w-full bg-white/20 h-0.5 rounded-full overflow-hidden">
+                            <div class="bg-yellow-400 h-full rounded-full" style="width: ${Math.min(100, Math.max(5, (count / maxCount) * 100))}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        db.ref("voteCounts").on("value", (snapshot) => {
+            const data = snapshot.val();
+            const mr = data?.mrCounts || {};
+            const miss = data?.missCounts || {};
+            
+            // Calculate and update total votes for each category
+            const mrTotal = Object.values(mr).reduce((sum, count) => sum + count, 0);
+            const missTotal = Object.values(miss).reduce((sum, count) => sum + count, 0);
+            const totalVotes = mrTotal + missTotal;
+            
+            // Animate total votes counts
+            animateCount(document.getElementById('mrTotalVotes'), parseInt(document.getElementById('mrTotalVotes').textContent.replace(/,/g, '')) || 0, mrTotal, 1000);
+            animateCount(document.getElementById('missTotalVotes'), parseInt(document.getElementById('missTotalVotes').textContent.replace(/,/g, '')) || 0, missTotal, 1000);
+            animateCount(document.getElementById('totalVotes'), parseInt(document.getElementById('totalVotes').textContent.replace(/[^0-9]/g, '')) || 0, totalVotes, 1000, true);
+            const updated = data?.lastUpdated || new Date().toISOString();
+
+            generateCards("mrVotes", mr);
+            generateCards("missVotes", miss);
+
+            // Update voting statistics summary for each category separately
+            console.log('Updating voting statistics summary for Mr category...');
+            updateVotingStatistics('mrVotingStatistics', mr);
+
+            console.log('Updating voting statistics summary for Miss category...');
+            updateVotingStatistics('missVotingStatistics', miss);
+
+            const lastUpdatedElement = document.getElementById("lastUpdated");
+            if (lastUpdatedElement) {
+                lastUpdatedElement.textContent = new Date(updated).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+        });
+
+        // Function to update voting statistics summary below the cards for a single category
+        function updateVotingStatistics(containerId, votes) {
+            console.log(`updateVotingStatistics called for container: ${containerId}`, votes);
+            let container = document.getElementById(containerId);
+            if (!container) {
+                // Create container if not exists
+                container = document.createElement('div');
+                container.id = containerId;
+                container.className = 'max-w-7xl mx-auto px-4 sm:px-6 py-6 bg-white rounded-xl shadow-lg mt-6 border border-gray-100';
+                // Append container below the respective category cards
+                const containerParent = containerId === 'mrVotingStatistics' ? document.getElementById('mrVotes') : document.getElementById('missVotes');
+                if (containerParent) {
+                    containerParent.parentNode.insertBefore(container, containerParent.nextSibling);
+                } else {
+                    console.error(`Parent container not found for ${containerId}`);
+                }
+            }
+
+            const entries = Object.entries(votes);
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="text-gray-600">No voting data available.</p>';
+                return;
+            }
+
+            // Sort descending by votes
+            entries.sort((a, b) => b[1] - a[1]);
+
+            // Find highest vote count
+            const highestVoteCount = entries[0][1];
+            // Find all contestants with highest votes (handle ties)
+            const leaders = entries.filter(([_, count]) => count === highestVoteCount).map(([name]) => name);
+
+            // Determine if tie or clear leader
+            const isTie = leaders.length > 1;
+
+            // Calculate vote differences
+            const voteDifferences = entries.map(([name, count]) => ({
+                name,
+                difference: highestVoteCount - count
+            }));
+
+            // Determine overall vote distribution summary
+            const totalVotes = entries.reduce((sum, [_, count]) => sum + count, 0);
+            let distributionSummary = 'Evenly split votes.';
+            if (highestVoteCount / totalVotes > 0.6) {
+                distributionSummary = 'Landslide lead by top contestant(s).';
+            } else if (highestVoteCount / totalVotes > 0.4) {
+                distributionSummary = 'Close race with a clear leader.';
+            }
+
+            // Format leader names for display
+            const formattedLeaders = leaders.map(name => {
+                const isMiss = name.toLowerCase().includes('miss');
+                const cleanName = name.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '');
+                return (isMiss ? 'MISS ' : 'MR ') + formatDisplayName(cleanName).toUpperCase();
+            }).join(', ');
+
+            // Build ranked list HTML
+            const rankedListHtml = entries.map(([name, count], index) => {
+                const isMiss = name.toLowerCase().includes('miss');
+                const cleanName = name.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '');
+                const displayName = (isMiss ? 'Miss ' : 'Mr ') + formatDisplayName(cleanName);
+                const diff = voteDifferences[index].difference;
+                const diffText = diff === 0 ? 'Leader' : `Diff: ${diff.toLocaleString()}`;
+                return `<li class="mb-1">${index + 1}. <strong>${displayName}</strong> - ${count.toLocaleString()} votes (${diffText})</li>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-2">Voting Statistics Summary</h3>
+                    
+                    <!-- Leader Section -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-200">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Current ${isTie ? 'Leaders' : 'Leader'}</h4>
+                        <p class="text-gray-800 text-lg font-medium">${formattedLeaders}</p>
+                        <p class="text-sm text-gray-500 mt-1">${totalVotes.toLocaleString()} total votes counted</p>
+                    </div>
+
+                    <!-- Status Section -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-200">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Race Status</h4>
+                        <div class="flex items-center justify-between">
+                            <p class="text-gray-800">${isTie ? 'Tie between top contestants' : 'Clear leader'}</p>
+                            <span class="text-sm px-3 py-1 rounded-full ${isTie ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
+                                ${isTie ? 'Tie' : 'Leading'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Vote Distribution -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-200">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-3">Vote Distribution</h4>
+                        <div class="space-y-4">
+                            ${entries.slice(0, 3).map(([name, count], index) => {
+                                const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
+                                const isLeader = index === 0 && !isTie;
+                                return `
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="font-medium">${(name.toLowerCase().includes('miss') ? 'MISS ' : 'MR ') + formatDisplayName(name.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '')).toUpperCase()}</span>
+                                        <span class="text-gray-600">${percentage}% (${count})</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="h-2.5 rounded-full ${isLeader ? 'bg-green-500' : 'bg-blue-500'}" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Ranked List -->
+                    <div class="bg-white p-5 rounded-lg border border-gray-200">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-3">Current Rankings</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contestant</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Votes</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% of Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    ${entries.map(([name, count], index) => {
+                                        const percentage = totalVotes > 0 ? (count / totalVotes * 100).toFixed(1) : 0;
+                                        const isLeader = index === 0 && !isTie;
+                                        return `
+                                        <tr class="${isLeader ? 'bg-green-50' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                ${index + 1}
+                                                ${isLeader ? '<span class="ml-1 text-green-600">★</span>' : ''}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${(name.toLowerCase().includes('miss') ? 'MISS ' : 'MR ') + formatDisplayName(name.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '')).toUpperCase()}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${count.toLocaleString()}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${percentage}%</td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Animate count function
+        function animateCount(element, start, end, duration, isTotalVotes = false) {
+            if (!element) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * (end - start) + start);
+                if (isTotalVotes) {
+                    element.textContent = `Total number of Votes: ${current.toLocaleString()}`;
+                } else {
+                    element.textContent = current.toLocaleString();
+                }
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Update individual candidate vote counts with animation
+        function animateCandidateCounts() {
+            document.querySelectorAll('.vote-count').forEach(span => {
+                const target = parseInt(span.getAttribute('data-target')) || 0;
+                const current = parseInt(span.textContent.replace(/,/g, '')) || 0;
+                animateCount(span, current, target, 1000);
+            });
+        }
+
+        // Call animateCandidateCounts after cards are generated
+        function generateCards(containerId, dataObj) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = "";
+            const totalVotes = Object.values(dataObj).reduce((a, b) => a + b, 0);
+            const sorted = Object.entries(dataObj).sort((a, b) => b[1] - a[1]);
+            const maxCount = sorted.length > 0 ? sorted[0][1] : 1; // Get the highest vote count
+            
+            // Update total votes display
+            const totalVotesElement = document.getElementById('totalVotes');
+            if (totalVotesElement) {
+                totalVotesElement.textContent = `Total Votes: ${totalVotes.toLocaleString()}`;
+            }
+
+            sorted.forEach(([candidate, count], index) => {
+                const percent = totalVotes ? ((count / totalVotes) * 100).toFixed(1) : 0;
+                // Clean the candidate name and determine category
+                const isMiss = candidate.toLowerCase().includes('miss');
+                const cleanName = candidate.replace(/\./g, '').replace(/\s+/g, '').replace(/^(mr|miss)_?/i, '');
+                
+                // Create display name with Mr/Miss prefix
+                const displayName = (isMiss ? 'Miss ' : 'Mr ') + formatDisplayName(cleanName);
+                
+                // Create image paths based on category
+                const imgPrefix = isMiss ? 'Miss_' : 'Mr_';
+                const imgPath = `media/${imgPrefix}${cleanName}.jpg`;
+                const imgPathLower = `media/${imgPrefix.toLowerCase()}${cleanName.toLowerCase()}.jpg`;
+                
+                // Log for debugging
+                console.log(`Loading image for ${candidate}:`, imgPath);
+
+                // Check if this contestant is tied for the lead
+                const isTiedForLead = index > 0 && count === sorted[0][1] && count > 0;
+                const isLeading = (index === 0 && count > 0) || isTiedForLead;
+                const card = document.createElement("div");
+                const isTop3 = index < 3 && count > 0;
+                card.className = `group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow transition-all duration-200 h-full flex flex-col relative ${isLeading ? 'ring-2 ring-yellow-400' : 'border border-gray-100'}`;
+                
+                // Create a more visually appealing card with smaller image and fixed width
+                card.style.flex = '0 1 160px';
+                card.innerHTML = `
+                    <div class="relative flex-1 bg-gradient-to-br from-green-50 to-gray-50 overflow-hidden" style="min-height: 60px;">
+                        <!-- Image container with gradient overlay -->
+                        <div class="relative w-full h-full overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-10"></div>
+                            <img 
+                                src="${imgPath}" 
+                                data-fallback-src="${imgPathLower}"
+                                alt="${displayName}" 
+                                class="w-full h-full object-cover object-center"
+                                style="object-position: center 25%;"
+                                onerror="handleImageError(this, '${candidate}', '${displayName}');"
+                                loading="lazy">
+                        </div>
+                        ${''}
+                        
+                        <!-- Contestant info overlay -->
+                        <div class="absolute bottom-0 left-0 right-0 p-2 z-20">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="flex items-center space-x-1">
+                                        <h3 class="text-sm font-bold text-white drop-shadow flex items-center space-x-2">
+                                            <span>${displayName.split(' ')[0]}</span>
+                                            ${facultyMap[candidate] ? `
+                                            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded ${facultyColors[facultyMap[candidate]] || 'bg-gray-100 text-gray-800'} whitespace-nowrap">
+                                                ${facultyMap[candidate]}
+                                            </span>
+                                            ` : ''}
+                                        </h3>
+                                        <!-- Removed placing badges as per user request -->
+                                        ${''}
+                                    </div>
+                                </div>
+                                <div class="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center text-xs space-x-1">
+                                    <span class="text-white font-extrabold text-2xl vote-count" data-target="${count}">0</span> <span class="text-white font-bold text-lg">votes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-yellow-600 font-medium">${percent}%</span>
+                        </div>
+                        <div class="mt-1 w-full bg-white/20 h-0.5 rounded-full overflow-hidden">
+                            <div class="bg-yellow-400 h-full rounded-full" style="width: ${Math.min(100, Math.max(5, (count / maxCount) * 100))}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+
+            // Animate candidate counts after cards are generated
+            animateCandidateCounts();
+        }
+            console.error(`Failed to load image for ${candidate}`);
+            
+            // Try the fallback source if available
+            const fallbackSrc = img.dataset.fallbackSrc;
+            if (fallbackSrc && img.src !== fallbackSrc) {
+                console.log(`Trying fallback image: ${fallbackSrc}`);
+                img.src = fallbackSrc;
+                img.onerror = function() {
+                    // If fallback also fails, use default avatar
+                    useFallbackAvatar(img, displayName);
+                };
+            } else {
+                // No fallback or fallback already tried, use default avatar
+                useFallbackAvatar(img, displayName);
+            }
+        
+        function useFallbackAvatar(img, displayName) {
+            console.log('Using fallback avatar for', displayName);
+            img.onerror = null; // Prevent infinite loop
+            img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName.split(' ')[0])}&background=006837&color=fff&size=256`;
+            img.style.objectFit = 'cover';
+            img.style.backgroundColor = '#006837';
+        }
+        
+    </script>
+    <script>
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            // Only proceed if elements exist
+            if (!mobileMenuButton || !mobileMenu) return;
+            
+            function toggleMenu(event) {
+                console.log('toggleMenu called');
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                mobileMenu.classList.toggle('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', !mobileMenu.classList.contains('hidden'));
+            }
+
+            // Add click event listener to button
+            mobileMenuButton.addEventListener('click', toggleMenu);
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close menu when pressing escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        // Block keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Block Ctrl+U
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                alert("View Source is disabled.");
+                return false;
+            }
+
+            // Block F12
+            if (e.key === "F12") {
+                e.preventDefault();
+                alert("Developer Tools are disabled.");
+                return false;
+            }
+
+            // Block Ctrl+Shift+I (Inspect)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+                e.preventDefault();
+                alert("Inspect is disabled.");
+                return false;
+            }
+        });
+
+        // Block right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert("Right-click is disabled.");
+            return false;
+        });
+    </script>
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mrTab = document.getElementById('mrTab');
+            const missTab = document.getElementById('missTab');
+            const mrContent = document.getElementById('mrContent');
+            const missContent = document.getElementById('missContent');
+
+            // Only proceed if elements exist
+            if (!mrTab || !missTab || !mrContent || !missContent) return;
+
+            // Add click event listeners to tabs
+            mrTab.addEventListener('click', function() {
+                mrTab.classList.add('bg-green-700', 'text-white');
+                missTab.classList.remove('bg-green-700', 'text-white');
+                missTab.classList.add('text-gray-700', 'hover:bg-gray-100');
+                mrContent.classList.remove('hidden');
+                missContent.classList.add('hidden');
+            });
+
+            missTab.addEventListener('click', function() {
+                missTab.classList.add('bg-green-700', 'text-white');
+                mrTab.classList.remove('bg-green-700', 'text-white');
+                mrTab.classList.add('text-gray-700', 'hover:bg-gray-100');
+                missContent.classList.remove('hidden');
+                mrContent.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

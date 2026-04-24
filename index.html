@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DWU Pageant 2025 - People's Choice Voting</title>
+    <script src="./css/style.css"></script>
+
+    <style>
+        :root {
+            --dwu-green: #006837;
+            --dwu-gold: #FFD700;
+            --dwu-light-gold: #FFF9C4;
+            --dwu-dark-green: #004d26;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+        }
+        section {
+            min-height: 100vh;
+            padding-top: 5rem;
+        }
+        .contestant-card {
+            border-top: 4px solid var(--dwu-gold);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .slide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-color: #000; /* Fallback color */
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        /* Contestant card styles */
+        .contestant-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .read-more {
+            color: #1a5f7a;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        .read-more:hover {
+            text-decoration: underline;
+        }
+        .read-more svg {
+            margin-left: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+        .read-more.expanded svg {
+            transform: rotate(180deg);
+        }
+        
+        /* Responsive image styles */
+        .contestant-image-container {
+            height: 0;
+            padding-bottom: 100%; /* Makes it square by default */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .contestant-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            transition: transform 0.3s ease;
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .contestant-image:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Adjust grid for mobile */
+        @media (max-width: 767px) {
+            .contestant-card {
+                margin: 0 auto;
+                max-width: 100%;
+            }
+            .contestant-image-container {
+                padding-bottom: 120%; /* Slightly taller aspect ratio for mobile */
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gradient-to-b from-gray-50 to-gray-100">
+
+    <!-- Navigation Bar -->
+    <nav class="text-white p-4 fixed w-full z-20 top-0 shadow-lg border-b-2 border-[#FFD700]" style="background: linear-gradient(135deg, #006837 0%, #004d26 100%);">
+        <div class="absolute inset-0 opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2H36zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="container mx-auto flex justify-between items-center relative">
+            <h1 class="text-2xl font-bold">DWU SRC Pageant 2025</h1>
+            <ul class="hidden md:flex space-x-6 text-white">
+                <li>
+                    <a href="#home" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="#rules" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h.01a1 1 0 100-2H10V9a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        Rules
+                    </a>
+                </li>
+                <li>
+                    <a href="#contestants" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                        </svg>
+                        Contestants
+                    </a>
+                </li>
+                <li>
+                    <a href="#vote" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h.01a1 1 0 100-2H10z" clip-rule="evenodd" />
+                        </svg>
+                        Vote
+                    </a>
+                </li>
+                <li>
+                    <a class='flex items-center hover:text-yellow-300 transition duration-300' href='verification.html'>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Verify Vote
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.html" class="flex items-center hover:text-yellow-300 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+                        </svg>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                </li>
+            </ul>
+  
+            <!-- Mobile menu button -->
+            <button class="md:hidden text-2xl z-30" id="mobile-menu-button" aria-label="Toggle menu">☰</button>
+        </div>
+
+      </nav>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden fixed top-16 left-0 right-0 bg-green-800 py-2 px-4 shadow-lg z-[9999]" style="transform: translateZ(9999px);">
+            <ul class="space-y-1.5 text-white">
+                <li><a href="#home" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                    </svg>
+                    Home
+                </a></li>
+                <li><a href="#rules" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h.01a1 1 0 100-2H10V9a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Rules
+                </a></li>
+                <li><a href="#contestants" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                    </svg>
+                    Contestants
+                </a></li>
+                <li><a href="#vote" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h.01a1 1 0 100-2H10zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h.01a1 1 0 100-2H10z" clip-rule="evenodd" />
+                    </svg>
+                    Vote
+                </a></li>
+                <li><a href="verification.html" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    Verify Vote
+                </a></li>
+                <li><a href="dashboard.html" class="flex items-center hover:text-white transition duration-300 py-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+                    </svg>
+                    Live Dashboard
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Pageant Header with Background Image -->
+    <div class="relative bg-cover bg-center text-white pt-16 pb-10 md:pt-20 md:pb-12 shadow-lg overflow-hidden" style="background-image: linear-gradient(rgba(0, 60, 30, 0.7), rgba(0, 40, 20, 0.6)), url('media/background.jpg'); background-size: cover; background-position: center center; background-attachment: fixed;">
+        <div class="absolute inset-0 bg-green-900/40 z-0"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <!-- Logos and Header Content -->
+            <div class="flex flex-col items-center">
+                <!-- Logos and Title Row -->
+                <div class="flex items-center justify-center w-full max-w-5xl mx-auto mb-8 space-x-4 md:space-x-8">
+                   
+                    
+                    <!-- Main Title -->
+                    <div class="text-center px-4 mt-4">
+                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">Divine Word University</h1>
+                        <h2 class="text-lg md:text-xl lg:text-2xl font-semibold text-yellow-100 mt-1">Student Representative Council Pageant</h2>
+                    </div>
+                    
+                    <!-- DWU School Logo- Right -->
+                    <div class="flex-shrink-0">
+                        <div class="relative h-20 w-20 md:h-24 md:w-24 rounded-full bg-white p-1 shadow-lg border-2 border-yellow-100">
+                            <img src="media/src-logo.jpg" alt="SRC Logo" class="h-full w-full rounded-full object-cover">
+                        </div>
+                    </div>
+                </div>
+                    
+                    <!-- SRC Logo- Logo -->
+                    <div class="mb-6">
+                        <div class="inline-flex items-center bg-yellow-500 bg-opacity-30 border border-yellow-400 text-yellow-100 px-6 py-2 rounded-full text-sm md:text-base font-medium transform transition-transform hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            People's Choice Award
+                        </div>
+                    </div>
+                    
+                    <!-- Theme Section -->
+                    <div class="mb-6 text-center">
+                        <span class="inline-flex items-center justify-center bg-yellow-100 text-green-900 px-6 py-2 rounded-full text-sm md:text-base font-semibold shadow-md transform transition-transform hover:scale-105">
+                            Theme 2025
+                        </span>
+                        <p class="text-xl md:text-2xl font-medium italic text-yellow-200 mt-4 px-4">
+                            "Crowning Tapestry of Christian Principles and Cultural Diversity"
+                        </p>
+                    </div>
+                    
+            
+                </div>
+            </div>
+            </div> <!-- Close the text-center div -->
+        </div>
+    </div>
+
+    <!-- Home Section with Slideshow Background -->
+    <section id="home" class="relative flex items-center justify-center text-center p-6 min-h-[60vh] md:min-h-[70vh] mt-0 w-full">
+        <!-- Slideshow Container -->
+        <div class="absolute inset-0 w-full h-full -z-10">
+            <div class="slideshow-container w-full h-full">
+                <!-- Slides -->
+                <div class="slide active" style="background-image: url('media/dwu-pageant-2025.jpg'); background-size: cover; background-position: center 40%; background-repeat: no-repeat; width: 100%; height: 100%; object-fit: cover;"></div>
+                <!-- Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-b from-green-600/40 to-green-800/40"></div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 max-w-4xl mx-auto text-white">
+            <a href="#vote" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-green-900 font-bold py-2.5 px-6 rounded-full text-base md:text-lg transition-all transform hover:scale-105 shadow-lg">
+                Cast Your Vote Now
+            </a>
+        </div>
+    </section>
+
+        <!-- Rules Section -->
+        <section id="rules" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4 max-w-4xl">
+                <h2 class="text-3xl font-bold text-center mb-12 text-green-800">📜 Voting Rules & Guidelines</h2>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">1</span>
+                            <span>Voting will open from <strong>Monday, July 28th to August 2nd @ 9:00 pm, 2025</strong>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">2</span>
+                            <div>
+                                <div>Voters must be signed in to their <strong>Google account</strong> to cast a vote. If you're already signed in, simply check the email address shown is correct.</div>
+                                <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 max-w-md mx-auto">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">3</span>
+                            <div>
+                                <div>Each person can cast <strong>two separate votes</strong>
+                                    <ul class="list-disc pl-6 mt-2 space-y-1">
+                                       <li>One vote for Mr. People’s Choice</li> 
+                                       <li>One vote for Miss People’s Choice</li>
+                                    </ul>
+                                 
+                                    </div>
+                                <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 max-w-md mx-auto">
+                                    <p class="text-sm text-gray-600 mb-2 text-center">Example:</p>
+                                    <img src="media/vote.png" alt="Voting Example" class="w-64 h-auto mx-auto rounded-md shadow-sm border border-gray-200">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">4</span>
+                            <span>All fields in the voting form are <strong>required</strong>. You must complete all questions to successfully submit your vote.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">5</span>
+                            <span>Any attempt to manipulate votes will result in <strong>disqualification</strong>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mr-3">6</span>
+                            <span>The winner will be announced during the DWU Pageant Crowning Night on <strong>Saturday, August 2nd, 2025</strong>.</span>
+                        </li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                        <p class="text-yellow-700">
+                            <strong>Note:</strong> By casting your vote, you agree to the terms and conditions of the DWU Pageant 2025 voting system.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- Contestants Section -->
+    <section id="contestants" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-green-800">Meet Our Contestants</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Contestant Card 1 - Tony Ben -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-red-600 to-red-800">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Mr_FBI.jpg" alt="Tony Ben" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Tony Ben</h3>
+                            <p class="text-yellow-300 font-medium drop-shadow-md">Mr. FBI - Business & Informatics</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Business Studies</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">2nd Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">Morobe Province</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Dancing, writing poems and songs, playing soccer">Dancing, Writing, Soccer</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-green-50 text-green-800 text-xs font-medium rounded-full border border-green-100 shadow-sm">
+                                    Faith
+                                </span>
+                                <span class="px-3 py-1.5 bg-blue-50 text-blue-800 text-xs font-medium rounded-full border border-blue-100 shadow-sm">
+                                    Integrity
+                                </span>
+                                <span class="px-3 py-1.5 bg-purple-50 text-purple-800 text-xs font-medium rounded-full border border-purple-100 shadow-sm">
+                                    Compassion
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-yellow-100 border-l-4 border-yellow-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I am passionate about advocating against poverty - a lack of opportunities, education, and access to resources."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short" class="line-clamp-3">
+                                    Creating an inclusive DWU community that reflects our values of faith, compassion, and integrity where everyone feels valued and heard...
+                                </p>
+                                <div id="vision-full" class="hidden mt-2 space-y-4">
+                                    <p>I aim to create a campus that reflects our values of faith, compassion, and integrity. I want to create an inclusive community where everyone feels valued and heard.</p>
+                                    <p>By fostering strong connections and supporting one another, we can inspire each other to pursue our passions while upholding our shared values.</p>
+                                    <p>Together, we can build a caring and uplifting environment at Divine Word University.</p>
+                                    
+                                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-blue-800 mb-2">My Passion</h4>
+                                        <p class="text-blue-700">I am passionate about advocating against poverty, which is a current social issue. I believe that poverty is not just a lack of money but also a lack of opportunities, education, and access to resources.</p>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-green-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-green-700">I am contesting for this pageant because my faculty believes in my potential and has encouraged me to take on this challenge. Their trust inspires me to showcase my talents and represent my faculty with confidence and integrity.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="read-more-btn" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center" onclick="toggleVision()">
+                                <span id="read-more-text">Read more</span>
+                                <svg id="read-more-arrow" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <script>
+                        function toggleVision(contestant) {
+                            const fullText = document.getElementById(`vision-full${contestant ? '-' + contestant : ''}`);
+                            const shortText = document.getElementById(`vision-short${contestant ? '-' + contestant : ''}`);
+                            const btnText = document.getElementById(`read-more-text${contestant ? '-' + contestant : ''}`);
+                            const arrow = document.getElementById(`read-more-arrow${contestant ? '-' + contestant : ''}`);
+                            
+                            if (fullText.classList.contains('hidden')) {
+                                fullText.classList.remove('hidden');
+                                if (shortText) shortText.classList.add('hidden');
+                                if (btnText) btnText.textContent = 'Read less';
+                                if (arrow) arrow.classList.add('rotate-180');
+                            } else {
+                                fullText.classList.add('hidden');
+                                if (shortText) shortText.classList.remove('hidden');
+                                if (btnText) btnText.textContent = 'Read more';
+                                if (arrow) arrow.classList.remove('rotate-180');
+                            }
+                        }
+                        
+                        // Function to toggle vision text visibility
+                        </script>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FBI</span>
+                            <a href="#vote" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Tony
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contestant Card 2 - Bathsheba Joel -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-red-600 to-red-800">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Miss_FBI.jpg" alt="Bathsheba Joel" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Bathsheba Joel</h3>
+                            <p class="text-yellow-300 font-medium">Miss FBI - Business & Informatics</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Business Studies</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">1st Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">Western Highlands</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Journaling and listening to music">Journaling, Music</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-pink-50 text-pink-800 text-xs font-medium rounded-full border border-pink-100 shadow-sm">
+                                    Respect
+                                </span>
+                                <span class="px-3 py-1.5 bg-purple-50 text-purple-800 text-xs font-medium rounded-full border border-purple-100 shadow-sm">
+                                    Humility
+                                </span>
+                                <span class="px-3 py-1.5 bg-indigo-50 text-indigo-800 text-xs font-medium rounded-full border border-indigo-100 shadow-sm">
+                                    Honesty
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-pink-100 border-l-4 border-pink-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I am passionate about good leadership and helping others thrive in a supportive environment."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text-bathsheba" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short-bathsheba" class="line-clamp-3">
+                                    To inspire excellence in character and leadership while bridging unity through Christian principles in our faculty...
+                                </p>
+                                <div id="vision-full-bathsheba" class="hidden mt-2 space-y-4">
+                                    <p>My vision is to bring positive change in my faculty. I aim to inspire my fellow course mates to pursue excellence not just academically, but in character and leadership as well.</p>
+                                    <p>My goal is to be the bridge to unity where Christian principles are practiced in our daily lives, creating an environment where everyone can grow and succeed together.</p>
+                                    
+                                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-purple-800 mb-2">My Passion</h4>
+                                        <p class="text-purple-700">I am passionate about good leadership and helping others. I strive to make a positive impact by inspiring and motivating others, providing a supporting environment where everyone can thrive.</p>
+                                    </div>
+                                    
+                                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-indigo-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-indigo-700">I believe this pageant is not just about showcasing beauty but about being the voice of those who deserve to be heard. It's an opportunity to represent my community with pride and make positive change through advocacy and leadership.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleVision('bathsheba')" class="text-pink-600 hover:text-pink-800 text-sm font-medium flex items-center">
+                                <span id="read-more-text-bathsheba">Read more</span>
+                                <svg id="read-more-arrow-bathsheba" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FBI</span>
+                            <a href="#vote" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Bathsheba
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contestant Card 3 - Ham Elizah -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-purple-600 to-purple-800">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Mr_FASS.jpg" alt="Ham Elizah" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Ham Elizah</h3>
+                            <p class="text-blue-300 font-medium">Mr. FASS - Arts & Social Sciences</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Social Works</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">3rd Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">Western Highlands</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Reading, volunteering, writing, organizing youth events, learning from elders">Reading, Volunteering, Writing</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-blue-50 text-blue-800 text-xs font-medium rounded-full border border-blue-100 shadow-sm">
+                                    Faith
+                                </span>
+                                <span class="px-3 py-1.5 bg-indigo-50 text-indigo-800 text-xs font-medium rounded-full border border-indigo-100 shadow-sm">
+                                    Integrity
+                                </span>
+                                <span class="px-3 py-1.5 bg-purple-50 text-purple-800 text-xs font-medium rounded-full border border-purple-100 shadow-sm">
+                                    Compassion
+                                </span>
+                                <span class="px-3 py-1.5 bg-cyan-50 text-cyan-800 text-xs font-medium rounded-full border border-cyan-100 shadow-sm">
+                                    Service
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-blue-100 border-l-4 border-blue-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I'm passionate about mental health awareness and breaking the stigma through education and spiritual support."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text-ham" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short-ham" class="line-clamp-3">
+                                    To promote unity, respect and dignity by weaving together Christian principles and PNG's rich cultural diversity...
+                                </p>
+                                <div id="vision-full-ham" class="hidden mt-2 space-y-4">
+                                    <p>I will use this platform to promote unity, respect and dignity by weaving together Christian principles and the rich cultural diversity of PNG.</p>
+                                    
+                                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-indigo-800 mb-2">My Passion</h4>
+                                        <p class="text-indigo-700">I am passionate about mental health awareness, especially among youths. I would address it by advocating for better resource allocation, supporting community health initiatives, and collaborating with stakeholders to improve service delivery through sustainable systems.</p>
+                                    </div>
+                                    
+                                    <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-cyan-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-cyan-700">I am contesting for this pageant to boost my confidence, share my values, and represent the importance of cultural and Christian identity in leadership. It's also a great platform to inspire others and amplify voices on issues that matter.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleVision('ham')" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                <span id="read-more-text-ham">Read more</span>
+                                <svg id="read-more-arrow-ham" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FASS</span>
+                            <a href="#vote" class="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Ham
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contestant Card 4 - Theresianthea Bengi -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-purple-600 to-purple-800">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Miss_FASS.jpg" alt="Theresianthea Bengi" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Theresianthea Bengi</h3>
+                            <p class="text-blue-300 font-medium">Miss FASS - Arts & Social Sciences </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Communication Arts</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">3rd Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">WHP & Chimbu</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Basketball, cooking, organizing">Basketball, Cooking, Organizing</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-red-50 text-red-800 text-xs font-medium rounded-full border border-red-100 shadow-sm">
+                                    Honesty
+                                </span>
+                                <span class="px-3 py-1.5 bg-pink-50 text-pink-800 text-xs font-medium rounded-full border border-pink-100 shadow-sm">
+                                    Cooperation
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-red-100 border-l-4 border-red-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I'm passionate about advocating against Gender-Based Violence and creating opportunities for students."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text-theresianthea" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short-theresianthea" class="line-clamp-3">
+                                    To advocate against GBV and create bridges between students and opportunities, while addressing social issues...
+                                </p>
+                                <div id="vision-full-theresianthea" class="hidden mt-2 space-y-4">
+                                    <p>I will use this platform to advocate for GBV against women, and bring more awareness to social issues given that I am under a faculty that truly values and advocates for social aspects of our country.</p>
+                                    <p>I would also like to use this platform by creating opportunities as a bridge between students and potential employers and investors.</p>
+                                    
+                                    <div class="bg-pink-50 border-l-4 border-pink-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-pink-800 mb-2">My Passion</h4>
+                                        <p class="text-pink-700">I am passionate about advocating for Gender Based Violence Against Women. I've experienced and seen victims suffer from this, hence, there is a need to advocate to bring help services to the victims. I would reach out to government and non-government groups or organizations to assist solve this issue.</p>
+                                    </div>
+                                    
+                                    <div class="bg-rose-50 border-l-4 border-rose-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-rose-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-rose-700">I participated in this pageant mainly to challenge myself in areas such as being a public speaker and to see how far I can go in terms of growing my network and be a catalyst for change in our community. I want to represent my faculty in the best way that I can.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleVision('theresianthea')" class="text-red-600 hover:text-red-800 text-sm font-medium flex items-center">
+                                <span id="read-more-text-theresianthea">Read more</span>
+                                <svg id="read-more-arrow-theresianthea" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FASS</span>
+                            <a href="#vote" class="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Theresianthea
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contestant Card 5 - Israel Kabai -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-sky-500 to-blue-600">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Mr_FMHS.jpg" alt="Israel Kabai" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Israel Kabai</h3>
+                            <p class="text-teal-200 font-medium">Mr. FMHS - Medicine & Health Sciences</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Health Management</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">1st Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">Sepik & Oro</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Baking, singing, youth fellowship, learning from elders">Baking, Singing, Fellowship</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-teal-50 text-teal-800 text-xs font-medium rounded-full border border-teal-100 shadow-sm">
+                                    Integrity
+                                </span>
+                                <span class="px-3 py-1.5 bg-emerald-50 text-emerald-800 text-xs font-medium rounded-full border border-emerald-100 shadow-sm">
+                                    Compassion
+                                </span>
+                                <span class="px-3 py-1.5 bg-cyan-50 text-cyan-800 text-xs font-medium rounded-full border border-cyan-100 shadow-sm">
+                                    Respect
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-teal-100 border-l-4 border-teal-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I'm passionate about addressing healthcare inequality and uplifting youth through opportunity and hope."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text-israel" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short-israel" class="line-clamp-3">
+                                    To ensure youths are uplifted with opportunity and hope, as they are the heartbeat of our nation's future...
+                                </p>
+                                <div id="vision-full-israel" class="hidden mt-2 space-y-4">
+                                    <p>I believe that youths are the heartbeat of our nation's future. I will lead efforts to ensure they are not left behind, but uplifted with opportunity and hope.</p>
+                                    
+                                    <div class="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-emerald-800 mb-2">My Passion</h4>
+                                        <p class="text-emerald-700">I am passionate about healthcare inequality, especially in rural areas. I would address it by advocating for better resource allocation, supporting community health initiatives, and collaborating with stakeholders to improve service delivery through sustainable systems.</p>
+                                    </div>
+                                    
+                                    <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-cyan-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-cyan-700">I am contesting in this pageant to boost my confidence, share my values, and represent the importance of cultural and Christian identity in leadership. It's also a great platform to inspire others and amplify voices on issues that matter.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleVision('israel')" class="text-teal-600 hover:text-teal-800 text-sm font-medium flex items-center">
+                                <span id="read-more-text-israel">Read more</span>
+                                <svg id="read-more-arrow-israel" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FMHS</span>
+                            <a href="#vote" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Israel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contestant Card 6 - Theresha Diannah Orere -->
+                <div class="contestant-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Header with Name and Title -->
+                    <div class="relative">
+                        <div class="h-64 w-full overflow-hidden bg-gradient-to-br from-sky-500 to-blue-600">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img src="media/Miss_FMHS.jpg" alt="Theresha Diannah Orere" class="max-h-full max-w-full object-contain">
+                            </div>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <h3 class="text-2xl font-bold text-white">Theresha Diannah Orere</h3>
+                            <p class="text-yellow-300 font-medium">Miss FMHS - Medicine & Health Sciences</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="p-6">
+                        <!-- Personal Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Department</p>
+                                <p class="font-medium">Environmental Health</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Year Level</p>
+                                <p class="font-medium">3rd Year</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Origin</p>
+                                <p class="font-medium">AROB, Central, Milne Bay, Oro</p>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-500 font-medium">Hobbies</p>
+                                <p class="font-medium line-clamp-1" title="Poetry, journaling, research">Poetry, Journaling, Research</p>
+                            </div>
+                        </div>
+
+                        <!-- Values -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                Values I Live By
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1.5 bg-purple-50 text-purple-800 text-xs font-medium rounded-full border border-purple-100 shadow-sm">
+                                    Community Service
+                                </span>
+                                <span class="px-3 py-1.5 bg-indigo-50 text-indigo-800 text-xs font-medium rounded-full border border-indigo-100 shadow-sm">
+                                    Giving Back
+                                </span>
+                                <span class="px-3 py-1.5 bg-violet-50 text-violet-800 text-xs font-medium rounded-full border border-violet-100 shadow-sm">
+                                    Knowledge Sharing
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Passion Statement -->
+                        <div class="bg-purple-100 border-l-4 border-purple-400 p-4 mb-4 rounded-r">
+                            <p class="text-sm text-gray-700 italic">
+                                "I believe in the Melanesian Spirit of togetherness and working as a community to achieve common good."
+                            </p>
+                        </div>
+
+                        <!-- Vision with Read More -->
+                        <div class="relative">
+                            <div id="vision-text-theresha" class="text-sm text-gray-600 mb-2">
+                                <p class="font-medium">My Vision:</p>
+                                <p id="vision-short-theresha" class="line-clamp-3">
+                                    Deconstructing and reconstruction of existing norms and cultural perspectives, to attain freedom...
+                                </p>
+                                <div id="vision-full-theresha" class="hidden mt-2 space-y-4">
+                                    <p>My vision is centered around deconstructing and reconstructing existing norms and cultural perspectives to attain freedom. I believe in preserving our cultural heritage and traditions while moving forward.</p>
+                                    
+                                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r mt-4">
+                                        <h4 class="font-semibold text-indigo-800 mb-2">My Passion</h4>
+                                        <p class="text-indigo-700">I am passionate about preserving our cultural heritage and the retention of traditions and knowledge passed on from our past. This ensures we remain rooted in our identity and know who we are as a people.</p>
+                                    </div>
+                                    
+                                    <div class="bg-violet-50 border-l-4 border-violet-400 p-4 rounded-r">
+                                        <h4 class="font-semibold text-violet-800 mb-2">Why I'm Contesting</h4>
+                                        <p class="text-violet-700">I am contesting for this pageant because I believe it provides the platform and exposure needed to be an advocate for people and issues that matter. I want to be the voice for the voiceless and a vessel for positive change. I may not be the brightest or prettiest, but what I do have is a heart to serve others and to bring hope.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="toggleVision('theresha')" class="text-purple-600 hover:text-purple-800 text-sm font-medium flex items-center">
+                                <span id="read-more-text-theresha">Read more</span>
+                                <svg id="read-more-arrow-theresha" class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Representing FMHS</span>
+                            <a href="#vote" class="text-white bg-sky-500 hover:bg-sky-600 focus:ring-4 focus:ring-sky-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
+                                Vote for Theresha
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Voting Section -->
+
+    <section id="vote" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-6 text-green-800">🗳️ People's Choice Voting</h2>
+            
+            <!-- Voting Closed Message -->
+            <div class="w-full max-w-2xl mx-auto mb-10 p-6 bg-white rounded-lg shadow-md border border-gray-200 text-center">
+                <div class="text-center p-6 bg-red-50 border-l-4 border-red-500 rounded">
+                    <h3 class="text-2xl font-semibold text-red-800 mb-4">Voting Has Ended</h3>
+                    <p class="text-red-700">Thank you for participating in the DWU Pageant 2025 voting!</p>
+                    <p class="text-gray-600 mt-4">The voting period has now closed. We appreciate everyone who took the time to cast their votes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-[#004d26] text-white py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">DWU Pageant 2025</h3>
+                    <p class="text-green-200 mt-1">Celebrating Excellence & Leadership</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p>For inquiries, contact: <a href="mailto:230050@student.dwu.ac.pg" class="text-yellow-300 hover:underline">230050@student.dwu.ac.pg</a></p>
+                    <p class="mt-1 text-green-200 text-sm"> 2025 DWU Pageant. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            // Set voting start to now to begin voting immediately
+            const votingStarts = new Date().getTime();
+            const votingEnds = new Date('August 2, 2025 21:00:00').getTime();
+            const now = new Date().getTime();
+            
+            if (now < votingStarts) {
+                // Countdown to voting start
+                const distance = votingStarts - now;
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = days.toString().padStart(2, '0');
+                document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+                
+                // Update the message
+                document.querySelector('.countdown-message').textContent = 'Voting is now open.';
+            } else if (now >= votingStarts && now < votingEnds) {
+                // Voting is open - show time remaining until voting closes
+                const distance = votingEnds - now;
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = days.toString().padStart(2, '0');
+                document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+                
+                // Update the message
+                document.querySelector('.countdown-message').textContent = 'Voting closes on August 2, 2025 at 9:00 PM';
+                document.querySelector('.countdown-container h3').textContent = 'Voting Closes In:';
+            } else {
+                // Voting has ended
+                clearInterval(countdownInterval);
+                document.querySelector('.countdown-container').innerHTML = `
+                    <div class="text-center p-6 bg-red-50 border-l-4 border-red-500 rounded">
+                        <h3 class="text-xl font-semibold text-red-800 mb-2">Voting Has Ended</h3>
+                        <p class="text-red-700">Thank you for participating in the DWU Pageant 2025 voting!</p>
+                    </div>`;
+            }
+        }
+
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize countdown
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call
+            
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            let currentSlide = 0;
+            
+            function nextSlide() {
+                if (slides.length > 0) {
+                    slides[currentSlide].classList.remove('active');
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    slides[currentSlide].classList.add('active');
+                }
+            }
+            
+            // Start slideshow if we have slides
+            if (slides.length > 0) {
+                slides[0].classList.add('active');
+                setInterval(nextSlide, 5000);
+            }
+            
+            // Mobile menu toggle
+            const menuButton = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            
+            function toggleMenu() {
+                const isHidden = menu.classList.contains('hidden');
+                if (isHidden) {
+                    // Open menu
+                    menu.classList.remove('hidden');
+                    menuButton.textContent = '✕';
+                } else {
+                    // Close menu
+                    menu.classList.add('hidden');
+                    menuButton.textContent = '☰';
+                }
+            }
+            
+            if (menuButton && menu) {
+                // Toggle menu on button click
+                menuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+                
+                // Close menu when clicking on a link
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+                
+                // Close on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+            }
+            
+            // Back to Top Button
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            function toggleBackToTop() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                    backToTopButton.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                    backToTopButton.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                }
+            }
+            
+            // Initial check
+            toggleBackToTop();
+            window.addEventListener('scroll', toggleBackToTop);
+
+            // Smooth scroll to top
+            backToTopButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none transform translate-y-4 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <style>
+        /* Ensure smooth scrolling for the whole page */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+       <!-- Footer -->
+<footer class="bg-green-800 text-white py-4">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <p class="text-sm">Developed by Keith Banks Pala</p>
+            <p class="text-xs"> Third Year Information Systems Student | DWU</p>
+        </div>
+    </div>
+</footer>
+</body>
+
+    <!-- Simple Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            
+            if (menuButton && menu) {
+                // Toggle menu on button click
+                menuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menu.classList.toggle('hidden');
+                    menuButton.textContent = menu.classList.contains('hidden') ? '☰' : '✕';
+                });
+                
+                // Close menu when clicking on a link
+                menu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+                
+                // Close on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                        menuButton.textContent = '☰';
+                    }
+                });
+            }
+        });
+    </script>
+</html>
