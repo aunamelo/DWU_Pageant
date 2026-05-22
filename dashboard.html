@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DWU SRC Pageant 2025 — Live Leaderboard</title>
+    <title>DWU SRC Pageant 2026 — Live Leaderboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --green:      #005C2E;
+            --green:      #006837;
             --green-mid:  #007A3D;
             --green-light:#0A9A50;
-            --gold:       #D4AF37;
-            --gold-light: #F0D060;
+            --gold:       #FFD700;
+            --gold-light: #FFF9C4;
             --gold-pale:  #FDF6DC;
-            --dark:       #0D1F13;
+            --dark:       #004d26;
             --card-bg:    #ffffff;
             --text:       #1a1a1a;
             --muted:      #6b7280;
@@ -34,7 +34,7 @@
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 100;
-            background: var(--dark);
+            background: linear-gradient(135deg, #006837 0%, #004d26 100%);
             border-bottom: 2px solid var(--gold);
             padding: 0 2rem;
             height: 64px;
@@ -60,19 +60,25 @@
             letter-spacing: 0.02em;
         }
         .nav-title span { color: var(--gold); }
-        .nav-back {
+        .nav-links {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            color: var(--gold-light);
+            gap: 1.5rem;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            letter-spacing: 0.04em;
             transition: color 0.2s;
         }
-        .nav-back:hover { color: #fff; }
+        .nav-link:hover { color: var(--gold-light); }
+        .nav-link.active { color: var(--gold); }
+        .nav-link svg { width: 16px; height: 16px; }
         #mobile-menu-button {
             display: none;
             background: none;
@@ -85,18 +91,23 @@
             display: none;
             position: fixed;
             top: 64px; left: 0; right: 0;
-            background: var(--dark);
+            background: linear-gradient(135deg, #006837 0%, #004d26 100%);
             padding: 1rem 2rem;
             border-bottom: 1px solid var(--gold);
             z-index: 99;
         }
         #mobile-menu a {
-            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
             font-size: 0.9rem;
-            display: block;
-            padding: 0.5rem 0;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
+        #mobile-menu a:last-child { border-bottom: none; }
+        #mobile-menu a.active { color: var(--gold); }
 
         /* ── HERO ────────────────────────────────────────── */
         .hero {
@@ -461,6 +472,38 @@
         }
         .last-updated strong { color: var(--text); }
 
+        footer {
+            background: linear-gradient(135deg, #006837 0%, #004d26 100%);
+            color: rgba(255,255,255,0.7);
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid var(--gold);
+        }
+        .footer-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        .footer-brand span { color: var(--gold); }
+        footer a { color: var(--gold-light); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        .footer-dev {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+        }
+
         /* ── ANIMATIONS ──────────────────────────────────── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -470,7 +513,7 @@
 
         /* ── RESPONSIVE ──────────────────────────────────── */
         @media (max-width: 640px) {
-            .nav-back { display: none; }
+            .nav-links { display: none; }
             #mobile-menu-button { display: block; }
             .stats-row { grid-template-columns: repeat(3,1fr); gap: 0.5rem; padding: 0 1rem; }
             .stat-value { font-size: 1.4rem; }
@@ -486,18 +529,37 @@
     <div class="nav-brand">
         <img src="media/src-logo.jpg" alt="DWU SRC" class="nav-logo"
              onerror="this.style.display='none'">
-        <span class="nav-title">DWU SRC <span>Pageant 2025</span></span>
+        <span class="nav-title">DWU SRC <span>Pageant 2026</span></span>
     </div>
-    <a href="/" class="nav-back">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-        </svg>
-        Back to Home
-    </a>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+            Back to Home
+        </a>
+        <a href="verification.html" class="nav-link">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Verify Vote
+        </a>
+        <a href="dashboard.html" class="nav-link active">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+            Live Dashboard
+        </a>
+    </div>
     <button id="mobile-menu-button" aria-label="Menu">☰</button>
 </nav>
 <div id="mobile-menu">
-    <a href="/">← Back to Home</a>
+    <a href="index.html">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Back to Home
+    </a>
+    <a href="verification.html">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        Verify Vote
+    </a>
+    <a href="dashboard.html" class="active">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        Live Dashboard
+    </a>
 </div>
 
 <!-- ── HERO ─────────────────────────────────────────────── -->
@@ -509,7 +571,7 @@
             Live Results
         </div>
         <h1>Voting <em>Dashboard</em></h1>
-        <p class="hero-sub">DWU People's Choice Awards — Cast your vote, watch it count</p>
+        <p class="hero-sub">DWU SRC Pageant 2026 — People's Choice Awards</p>
         <div class="hero-badge">
             Total Votes: <span class="hero-badge-num" id="headerTotalVotes">0</span>
         </div>
@@ -572,6 +634,20 @@
         Last updated: <strong id="lastUpdated">Loading...</strong>
     </div>
 </div>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">SRC <span>Pageant 2026</span></div>
+        <div style="font-size:0.85rem">Celebrating Excellence &amp; Leadership</div>
+        <div style="font-size:0.85rem">
+            For inquiries: <a href="mailto:230050@student.dwu.ac.pg">230050@student.dwu.ac.pg</a>
+        </div>
+        <div style="font-size:0.8rem; color:rgba(255,255,255,0.4)">© 2026 SRC Pageant. All rights reserved.</div>
+        <div class="footer-dev">
+            Developed by Keith Banks Pala &mdash; Third Year Information Systems Student | DWU
+        </div>
+    </div>
+</footer>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
